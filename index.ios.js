@@ -1,0 +1,6 @@
+console.ignoredYellowBox = ['View #'];
+
+import React, { Component } from 'react';
+import { AppRegistry } from 'react-native';
+import Root from 'app/root';
+AppRegistry.registerComponent('invisionTest', () => Root);
