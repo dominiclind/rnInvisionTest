@@ -35,12 +35,14 @@ class CardSlider extends Component {
     super(props)
 
     this.state = {
-      fullscreen: new Animated.Value(0)
+      fullscreen: new Animated.Value(0),
+      offset: 0
     }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if(nextProps.fullscreen !== this.props.fullscreen) {
+    if(nextProps.fullscreen !== this.props.fullscreen ||
+      nextState.offset !== this.state.offset) {
       return true;
     } else {
       return false;
@@ -63,6 +65,12 @@ class CardSlider extends Component {
     }
   }
 
+  onScroll(e) {
+    const { x:offset } = e.nativeEvent.contentOffset;
+
+    this.setState({offset: offset / width});
+  }
+
   render() {
     const { fullscreen = false } = this.props;
 
@@ -75,11 +83,11 @@ class CardSlider extends Component {
       outputRange: [30, 0]
     })
 
-    console.log(fullscreen);
-
     return (
       <View style={ styles.component }>
         <ScrollView 
+          onScroll={(e) => this.onScroll(e)}
+          scrollEventThrottle={10}
           horizontal
           pagingEnabled
           style={styles.slider}
@@ -99,7 +107,12 @@ class CardSlider extends Component {
                 }
               ]}
             >
-              <Card fullscreen={fullscreen} {...entry}/>
+              <Card
+                offset={(this.state.offset)}
+                index={index}
+                fullscreen={fullscreen}
+                {...entry}
+              />
             </Animated.View>
           )
         })}

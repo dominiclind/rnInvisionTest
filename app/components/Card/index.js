@@ -24,7 +24,9 @@ class Card extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if(nextProps.fullscreen !== this.props.fullscreen) {
+    if(nextProps.fullscreen !== this.props.fullscreen ||
+      nextProps.offset !== this.props.offset
+      ) {
       return true;
     } else {
       return false;
@@ -48,7 +50,7 @@ class Card extends Component {
   }
 
   render() {
-    const { title = 'hej', subtitle = 'sub', illustration, fullscreen } = this.props;
+    const { title = 'hej', subtitle = 'sub', illustration, fullscreen, offset, index } = this.props;
 
     const animPos = this.state.fullscreen.interpolate({
       inputRange: [0, 1],
@@ -77,6 +79,10 @@ class Card extends Component {
       outputRange: [1, 0 ,0]
     });
 
+
+    // let realOffset = offset > 0 ? offset - this.props.index : offset;
+    // console.log('offset: ',realOffset );
+
     return (
       <TouchableOpacity
         style={[
@@ -96,7 +102,12 @@ class Card extends Component {
           >
             <Image
               source={{ uri: illustration }}
-              style={styles.image}
+              style={[
+                styles.image,
+                {
+                  transform: [{translateX: (offset - index) * 100 }]
+                }
+              ]}
             />
             <Animated.View
               style={[
@@ -183,13 +194,15 @@ const styles = StyleSheet.create({
       borderTopRightRadius: entryBorderRadius,
       borderBottomRightRadius: 0,
       borderBottomLeftRadius: 0,
+      left: -20,
+      right: -20
     },
     icon: {
       height: 70,
       width: 70,
       backgroundColor: 'white',
       borderRadius: 8,
-      shadowOpacity: .8,
+      shadowOpacity: .6,
       shadowRadius: 6,
       shadowColor: 'black',
       shadowOffset: {
