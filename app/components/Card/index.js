@@ -12,6 +12,7 @@ import {
 
 
 import CardSlider from 'app/stores/CardSlider';
+import CardNavBar from 'app/components/CardNavBar';
 
 class Card extends Component {
 
@@ -49,6 +50,16 @@ class Card extends Component {
     }
   }
 
+  _onPress() {
+    const { fullscreen } = this.props;
+
+    if (!fullscreen) {
+      CardSlider.fullscreen = !CardSlider.fullscreen;
+    } else {
+      return false;
+    }
+    
+  }
   render() {
     const { title = 'hej', subtitle = 'sub', illustration, fullscreen, offset, index } = this.props;
 
@@ -79,6 +90,13 @@ class Card extends Component {
       outputRange: [1, 0 ,0]
     });
 
+    const animNavBar = this.state.fullscreen.interpolate({
+      inputRange: [0, 0.7, 1],
+      outputRange: [-50, -50, 0]
+    });
+
+    
+
 
     // let realOffset = offset > 0 ? offset - this.props.index : offset;
     // console.log('offset: ',realOffset );
@@ -89,7 +107,7 @@ class Card extends Component {
           styles.card,
         ]}
         activeOpacity={1}
-        onPress={() => CardSlider.fullscreen = !CardSlider.fullscreen}
+        onPress={() => this._onPress()}
         >
           <View
             style={[
@@ -109,6 +127,21 @@ class Card extends Component {
                 }
               ]}
             />
+              
+            {/* NAV BAR */}
+            <Animated.View
+              style={[
+                styles.navBarWrap,
+                {
+                  transform: [{ translateY: animNavBar }]
+                }
+              ]}
+            >
+              <CardNavBar onClose={() => CardSlider.fullscreen = false} />
+            </Animated.View>
+            {/* /NAV BAR */}
+            
+            {/* ICON */}
             <Animated.View
               style={[
                 styles.icon, 
@@ -117,6 +150,10 @@ class Card extends Component {
                 }
               ]}
             />
+            {/* /ICON */}
+
+
+            {/* IMAGE TITLE TEXT */}
             <Animated.View
               style={[
                 styles.imageTitle,
@@ -131,6 +168,8 @@ class Card extends Component {
               <Text style={[styles.title, styles.imageText]} numberOfLines={2}>{ title.toUpperCase() }</Text>
               <Text style={[styles.subtitle, styles.imageText]} numberOfLines={2}>{ subtitle }</Text>
             </Animated.View>
+            {/* /IMAGE TITLE TEXT  */}
+
           </View>
           <View style={styles.textContainer}>
             <Animated.Text
@@ -237,6 +276,12 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       color: 'white',
       backgroundColor: 'transparent'
+    },
+    navBarWrap: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0
     }
 });
 
